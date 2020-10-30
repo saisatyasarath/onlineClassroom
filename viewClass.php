@@ -206,6 +206,47 @@
   background-color: #5cb85c;
   color: white;
 }
+
+
+
+
+.tab {
+  overflow: hidden;
+  border: 1px solid #ccc;
+  background-color: #f1f1f1;
+}
+
+/* Style the buttons that are used to open the tab content */
+.tab button {
+  background-color: inherit;
+  float: left;
+  border: none;
+  outline: none;
+  cursor: pointer;
+  padding: 14px 16px;
+  transition: 0.3s;
+}
+
+/* Change background color of buttons on hover */
+.tab button:hover {
+  background-color: #ddd;
+}
+
+/* Create an active/current tablink class */
+.tab button.active {
+  background-color: #ccc;
+}
+
+/* Style the tab content */
+.tabcontent {
+  display: none;
+  padding: 6px 12px;
+  border: 1px solid #ccc;
+  border-top: none;
+}
+
+
+
 </style>
 <body>
 <div id="mySidenav" class="sidenav">
@@ -223,9 +264,9 @@
           <button class="btn btn-primary" id = "myBtn" style="margin-left: 10px;">Upload Study Material</button><button style="margin-left: 700px; " class="btn btn-primary" id = "myBtn1">Upload Assignment</button>
           <br />
           <br />
-          <nav class="navbar navbar-expand-sm bg-light ">
+          <!-- <nav class="navbar navbar-expand-sm bg-light ">
 
-  <!-- Links -->
+  
           <ul class="navbar-nav">
     <li class="nav-item" style="margin-right:80px; margin-left: 30px; background-color: green;">
       <a class="nav-link" href="#">View Studymaterials</a>
@@ -238,9 +279,15 @@
     </li>
   </ul>
 
-      </nav>
+      </nav> -->
 
-        <div class="panel-group">
+      <div class="tab">
+        <button class="tablinks" onclick="openCity(event, 'stm')">StudyMaterials</button>
+        <button class="tablinks" onclick="openCity(event, 'anc')">Announcements</button>
+        <button class="tablinks" onclick="openCity(event, 'ass')">Assignments</button>
+      </div>
+    <div id="stm" class="tabcontent">
+    <div class="panel-group">
       <?php 
 
         $q = "SELECT * from studymaterials where cid = $id ";
@@ -256,6 +303,31 @@
         }
       ?>
       </div>
+      </div>
+      <div id="anc" class="tabcontent">
+  <h3>Paris</h3>
+  <p>Paris is the capital of France.</p>
+</div>
+
+<div id="ass" class="tabcontent">
+  <div class="panel-group">
+      <?php 
+
+        $q = "SELECT * from assignments where cid = $id ";
+        $sp = mysqli_prepare($conn,$q);
+        mysqli_stmt_execute($sp);
+        $result = mysqli_stmt_get_result($sp);
+        $count = 0;
+        while($rows = $result->fetch_assoc()){
+          $aid = $rows['id'];
+          echo '<div class="panel panel-default">';
+          echo '<div class="panel-heading">'.$rows["name"].'  <label class="pull-right"> Due Date : '.$rows["date"].'</label></div>';
+          echo '<div class="panel-body">'.$rows["description"].'<button class="btn btn-primary pull-right"><a href="viewSubmissions.php?cid='.$id.'&aid='.$aid.'" style="color:white;">View Submissions</a></button></div>';  
+            echo '</div>';
+          }
+      ?>
+      </div>
+</div>
 </div>
 
 <div id="myModal" class="modal">
@@ -412,6 +484,28 @@ window.onclick = function(event) {
   if (event.target == modal1) {
     modal1.style.display = "none";
   }
+}
+
+
+function openCity(evt, cityName) {
+  // Declare all variables
+  var i, tabcontent, tablinks;
+
+  // Get all elements with class="tabcontent" and hide them
+  tabcontent = document.getElementsByClassName("tabcontent");
+  for (i = 0; i < tabcontent.length; i++) {
+    tabcontent[i].style.display = "none";
+  }
+
+  // Get all elements with class="tablinks" and remove the class "active"
+  tablinks = document.getElementsByClassName("tablinks");
+  for (i = 0; i < tablinks.length; i++) {
+    tablinks[i].className = tablinks[i].className.replace(" active", "");
+  }
+
+  // Show the current tab, and add an "active" class to the button that opened the tab
+  document.getElementById(cityName).style.display = "block";
+  evt.currentTarget.className += " active";
 }
 </script>
 

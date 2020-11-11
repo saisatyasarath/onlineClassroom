@@ -3,10 +3,11 @@
 	if(isset($_POST['submit'])){
 		$des = $_POST['ades'];
 		$cid = $_POST['id'];
+		$tit = $_POST['title'];
 		session_start();
 		$fid = $_SESSION['fid'];
-		$stmt = $conn->prepare("INSERT INTO announcements (cid,uid, des) VALUES (?,?, ?)");
-		$stmt->bind_param('iis',$cid, $fid, $des);
+		$stmt = $conn->prepare("INSERT INTO announcements (cid,uid, des,title) VALUES (?,?,?,?)");
+		$stmt->bind_param('iis',$cid, $fid, $des,$tit);
 		$stmt->execute();
 		?>
 		<script type="text/javascript">

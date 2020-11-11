@@ -21,7 +21,13 @@
     $sub = null;
     while($ab = $ans->fetch_assoc()){
       $sub = $ab['cname'];
+      $ffid = $ab['fid'];
     }
+
+    if($_SESSION["fid"]!=$ffid){
+      header("Location:login.php");
+    }
+    $temp = $id;
 
    //echo $id;
 ?>
@@ -111,7 +117,7 @@
 }
 
 /*Modal */
-.modal {
+.modal{
   display: none; /* Hidden by default */
   position: fixed; /* Stay in place */
   z-index: 1; /* Sit on top */
@@ -125,6 +131,33 @@
   background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
 }
 .modal1 {
+  display: none; /* Hidden by default */
+  position: fixed; /* Stay in place */
+  z-index: 1; /* Sit on top */
+  padding-top: 100px; /* Location of the box */
+  left: 0;
+  top: 0;
+  width: 100%; /* Full width */
+  height: 100%; /* Full height */
+  overflow: auto; /* Enable scroll if needed */
+  background-color: rgb(0,0,0); /* Fallback color */
+  background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+}
+.modal2 {
+  display: none; /* Hidden by default */
+  position: fixed; /* Stay in place */
+  z-index: 1; /* Sit on top */
+  padding-top: 100px; /* Location of the box */
+  left: 0;
+  top: 0;
+  width: 100%; /* Full width */
+  height: 100%; /* Full height */
+  overflow: auto; /* Enable scroll if needed */
+  background-color: rgb(0,0,0); /* Fallback color */
+  background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+}
+
+.modal3 {
   display: none; /* Hidden by default */
   position: fixed; /* Stay in place */
   z-index: 1; /* Sit on top */
@@ -188,6 +221,34 @@
 
 .close1:hover,
 .close1:focus {
+  color: #000;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.close2 {
+  color: white;
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
+}
+
+.close2:hover,
+.close2:focus {
+  color: #000;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.close3 {
+  color: white;
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
+}
+
+.close3:hover,
+.close3:focus {
   color: #000;
   text-decoration: none;
   cursor: pointer;
@@ -261,7 +322,7 @@
 <div class="jumbotron">
        <label class = "board" style="margin-left: 245px; color: yellow;">Welcome  <?php echo $sub;?> </label>         
 </div>  
-          <button class="btn btn-primary" id = "myBtn" style="margin-left: 10px;">Upload Study Material</button><button style="margin-left: 700px; " class="btn btn-primary" id = "myBtn1">Upload Assignment</button>
+          <button class="btn btn-primary" id = "myBtn" style="margin-left: 10px;">Upload Study Material</button><button style="margin-left: 260px; " class="btn btn-primary" id = "myBtn2">Change Faculty</button><button style="margin-left: 340px; " class="btn btn-primary" id = "myBtn1">Upload Assignment</button>
           <br />
           <br />
           <!-- <nav class="navbar navbar-expand-sm bg-light ">
@@ -275,7 +336,7 @@
       <a class="nav-link" href="#">Class Announcements</a>
     </li>
     <li class="nav-item" style="margin-right:30px;margin-left: 110px;">
-      <a class="nav-link" href="viewAssignmentsFaculty.php?id=<?php echo $id; ?>">View Assignments</a>
+      <a class="nav-link" href="viewAssignmentsFaculty.php?id=<?php  $id; ?>">View Assignments</a>
     </li>
   </ul>
 
@@ -305,9 +366,40 @@
       </div>
       </div>
       <div id="anc" class="tabcontent">
-  <h3>Paris</h3>
-  <p>Paris is the capital of France.</p>
-</div>
+          <button class="btn btn-primary"  style="margin-left: 900px;margin-bottom: 10px;" id = "myBtn3">Create Announcement</button>
+
+         
+
+          <div class="panel-group">
+        <?php 
+
+        $q = "SELECT * from announcements where cid = $id";
+        $sp = mysqli_prepare($conn,$q);
+        mysqli_stmt_execute($sp);
+        $result = mysqli_stmt_get_result($sp);
+        $count = 0;
+        while($rows = $result->fetch_assoc()){
+          $uid = $rows['uid'];
+          $name = "";
+          $q1 = "SELECT * from users where id = $uid";
+          $sp1 = mysqli_prepare($conn,$q1);
+          mysqli_stmt_execute($sp1);
+          $result1 = mysqli_stmt_get_result($sp1);
+          while($rows1 = $result1->fetch_assoc()){
+            $name = $rows1['email'];
+          }
+
+
+          echo '<div class="panel panel-default">';
+          echo '<div class="panel-heading">'.$rows["title"].'<label class="pull-right" style="margin-bottom:20px;">  by '.$name.'</label></div>';
+          
+          echo '<div class="panel-body">'.$rows["des"].'</div>';
+          echo '</div>';
+        }
+      ?>
+      </div>
+          
+      </div>
 
 <div id="ass" class="tabcontent">
   <div class="panel-group">
@@ -333,7 +425,7 @@
 <div id="myModal" class="modal">
 <div class="modal-content">
     <div class="modal-header">
-      <h1>Add Class</h1>	
+      <h1>Add Material</h1>	
       <span class="close">&times;</span>
       
     </div>
@@ -381,7 +473,7 @@
 <div class="modal-content">
     <div class="modal-header">
       	
-      <span class="close1">&times;</span>
+      <span class="close1" style="margin-left: 1170px;">&times;</span>
       
     </div>
     <div class="modal-body">
@@ -424,6 +516,85 @@
     </div>
   </div>
 </div>
+
+<div id="myModal2" class="modal2">
+<div class="modal-content">
+    <div class="modal-header">
+        
+      <span class="close2" style="margin-left: 1170px;">&times;</span>
+      
+    </div>
+    <div class="modal-body">
+      <br>
+      <br>
+      <div class="page-wrapper bg-gra-01 p-t-180 p-b-100 font-poppins">
+        <div class="wrapper wrapper--w780">
+            <div class="card card-3">
+                
+                <div class="card-body" style="background-color: black">
+                    <h2 class="title">Enter following Details</h2>
+                    <form method="POST" action="facultyChange.php" enctype="multipart/form-data">
+                        <div class="input-group">
+                            <input class="input--style-3" type="email" placeholder="Enter Email" name="email" required="required">
+                        </div>
+                        
+                        <input type="hidden" name="id" value="<?php echo $temp ?>">
+                        <div class="p-t-10">
+                            <input class="btn btn--pill btn--green" type="submit" name="submit">
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    </div>
+    <div class="modal-footer">
+      <h1></h1>
+    </div>
+  </div>
+</div>
+
+<div id="myModal3" class="modal3">
+<div class="modal-content">
+    <div class="modal-header">
+        
+      <span class="close3" style="margin-left: 1170px;">&times;</span>
+      
+    </div>
+    <div class="modal-body">
+      <br>
+      <br>
+      <div class="page-wrapper bg-gra-01 p-t-180 p-b-100 font-poppins">
+        <div class="wrapper wrapper--w780">
+            <div class="card card-3">
+                
+                <div class="card-body" style="background-color: black">
+                    <h2 class="title">Add Announcement</h2>
+                    <form method="POST" action="addAnncFac.php" enctype="multipart/form-data">
+                      <div class="input-group">
+                            <input class="input--style-3" type="text" placeholder="Title" name="title" required="required">
+                        </div>
+                        <div class="input-group">
+                            <input class="input--style-3" type="text" placeholder="Announcement Description" name="ades" required="required">
+                        </div>
+                        
+                        <input type="hidden" name="id" value="<?php echo $temp ?>">
+                        <div class="p-t-10">
+                            <input class="btn btn--pill btn--green" type="submit" name="submit">
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    </div>
+    <div class="modal-footer">
+      <h1></h1>
+    </div>
+  </div>
+</div>
+
+
   </div>
 </body>
 
@@ -485,6 +656,55 @@ window.onclick = function(event) {
     modal1.style.display = "none";
   }
 }
+
+
+var modal2 = document.getElementById("myModal2");
+
+// Get the button that opens the modal
+var btn2 = document.getElementById("myBtn2");
+
+// Get the <span> element that closes the modal
+var span2 = document.getElementsByClassName("close2")[0];
+btn2.onclick = function() {
+  modal2.style.display = "block";
+}
+
+// When the user clicks on <span> (x), close the modal
+span2.onclick = function() {
+  modal2.style.display = "none";
+}
+
+// When the user clicks anywhere outside of the modal, close it
+window.onclick = function(event) {
+  if (event.target == modal2) {
+    modal2.style.display = "none";
+  }
+}
+
+var modal3 = document.getElementById("myModal3");
+
+// Get the button that opens the modal
+var btn3 = document.getElementById("myBtn3");
+
+// Get the <span> element that closes the modal
+var span3 = document.getElementsByClassName("close3")[0];
+btn3.onclick = function() {
+  modal3.style.display = "block";
+}
+
+// When the user clicks on <span> (x), close the modal
+span3.onclick = function() {
+  modal3.style.display = "none";
+}
+
+// When the user clicks anywhere outside of the modal, close it
+window.onclick = function(event) {
+  if (event.target == modal3) {
+    modal3.style.display = "none";
+  }
+}
+
+
 
 
 function openCity(evt, cityName) {

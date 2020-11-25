@@ -171,6 +171,20 @@
   background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
 }
 
+.modal4 {
+  display: none; /* Hidden by default */
+  position: fixed; /* Stay in place */
+  z-index: 1; /* Sit on top */
+  padding-top: 100px; /* Location of the box */
+  left: 0;
+  top: 0;
+  width: 100%; /* Full width */
+  height: 100%; /* Full height */
+  overflow: auto; /* Enable scroll if needed */
+  background-color: rgb(0,0,0); /* Fallback color */
+  background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+}
+
 /* Modal Content */
 .modal-content {
   position: relative;
@@ -249,6 +263,13 @@
 
 .close3:hover,
 .close3:focus {
+  color: #000;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.close4:hover,
+.close4:focus {
   color: #000;
   text-decoration: none;
   cursor: pointer;
@@ -414,7 +435,8 @@
           $aid = $rows['id'];
           echo '<div class="panel panel-default">';
           echo '<div class="panel-heading">'.$rows["name"].'  <label class="pull-right"> Due Date : '.$rows["date"].'</label></div>';
-          echo '<div class="panel-body">'.$rows["description"].'<button class="btn btn-primary pull-right"><a href="viewSubmissions.php?cid='.$id.'&aid='.$aid.'" style="color:white;">View Submissions</a></button></div>';  
+          echo '<div class="panel-body">'.$rows["description"].'<button class="btn btn-primary pull-right"><a href="viewSubmissions.php?cid='.$id.'&aid='.$aid.'" style="color:white;">View Submissions</a></button></div>';
+          echo '<div class="panel-body"><button class="btn btn-primary" id = "myBtn5" onclick = "show('.$aid.')" value="'.$aid.'">Modify Assignment</button></div>';  
             echo '</div>';
           }
       ?>
@@ -579,6 +601,7 @@
                         </div>
                         
                         <input type="hidden" name="id" value="<?php echo $temp ?>">
+                        <input type="hidden" name="id" value="<?php echo $ffid ?>">
                         <div class="p-t-10">
                             <input class="btn btn--pill btn--green" type="submit" name="submit">
                         </div>
@@ -594,6 +617,53 @@
   </div>
 </div>
 
+<div id="myModal4" class="modal4">
+<div class="modal-content">
+    <div class="modal-header">
+        
+      <span class="close4" style="margin-left: 1170px;">&times;</span>
+      
+    </div>
+    <div class="modal-body">
+      <br>
+      <br>
+      <div class="page-wrapper bg-gra-01 p-t-180 p-b-100 font-poppins">
+        <div class="wrapper wrapper--w780">
+            <div class="card card-3">
+                
+                <div class="card-body" style="background-color: black">
+                    <h1 class="title">Modify Assignment</h1>
+                     <form method="POST" action="updateAssignmentFaculty.php" enctype="multipart/form-data">
+                      <div class="input-group">
+                            <input class="input--style-3" type="text" placeholder="Assignment Name" name="name1" required="required">
+                        </div>
+                        <div class="input-group">
+                            <input class="input--style-3 js-datepicker" type="text" placeholder="Due Date" name="date" required="required">
+                            <i class="zmdi zmdi-calendar-note input-icon js-btn-calendar"></i>
+                        </div>
+                        <div class="input-group">
+                            <input class="input--style-3" type="text" placeholder="Assignment Description" name="description" required="required">
+                        </div>
+                        <div class="input-group">
+                           <input type="file" name="fileToUpload" >
+                        </div>
+                        
+                          <input type="hidden" name="id" value = "<?php echo $id ?>">
+                          <input type="hidden" id="assid" name="aid" value="">
+                        <div class="p-t-10">
+                            <input class=" btn--pill btn--green" type="submit" name="submit">
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    </div>
+    <div class="modal-footer">
+      <h1></h1>
+    </div>
+  </div>
+</div>
 
   </div>
 </body>
@@ -701,6 +771,34 @@ span3.onclick = function() {
 window.onclick = function(event) {
   if (event.target == modal3) {
     modal3.style.display = "none";
+  }
+}
+
+
+var modal4 = document.getElementById("myModal4");
+
+// Get the button that opens the modal
+
+
+// Get the <span> element that closes the modal
+var span4 = document.getElementsByClassName("close4")[0];
+function show(par) {
+  modal4.style.display = "block";
+  var id = par;
+  console.log(id);
+  var asid = document.getElementById("assid");
+  asid.value = id;
+}
+
+// When the user clicks on <span> (x), close the modal
+span4.onclick = function() {
+  modal4.style.display = "none";
+}
+
+// When the user clicks anywhere outside of the modal, close it
+window.onclick = function(event) {
+  if (event.target == modal4) {
+    modal4.style.display = "none";
   }
 }
 

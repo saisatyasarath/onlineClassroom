@@ -10,13 +10,16 @@
     $des = $_POST["description"];
   	echo gettype($date);
   	//echo $cid;
+
+    $date1 = "".date("Y_m_d");
+    $time = "".date("H_i_sa",time());
   	
 
   	
   		//echo "I am here";
   		//echo $_POST['fileToUpload'];
   		$target_dir = "uploads/";
-		$target_file = $target_dir .''.$cid.''. basename($_FILES['fileToUpload']["name"]);
+		$target_file = $target_dir .''.$cid.''.$date1.''.$time.''. basename($_FILES['fileToUpload']["name"]);
     
 		$uploadOk = 1;
 		

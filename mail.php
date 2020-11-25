@@ -15,11 +15,11 @@
     $mail->IsHTML(true);
 
     //Authentication
-    $mail->Username = "sarathchandhra365@gmail.com";
-    $mail->Password = "Sarath@123";
+    $mail->Username = "";
+    $mail->Password = "";
 
     //Set Params
-    $mail->SetFrom("sarathchandhra365@gmail.com");
+    
     $mail->AddAddress("scssreddy.gudimetla@vitap.ac.in");
     $mail->Subject = "Test";
     $mail->Body = "hello";

@@ -2,9 +2,9 @@
    include 'databaseConnect.php';
    session_start();
    if(isset($_SESSION["uid"])){
-   	 
+     
    }else{
-   		header("Location:login.php");
+      header("Location:login.php");
    }
    $sid = $_SESSION["uid"];
    $l = "classroom.jpg";
@@ -13,7 +13,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<title>VirtualClassroom</title>
+  <title>VirtualClassroom</title>
   <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta name="description" content="Colorlib Templates">
@@ -35,13 +35,13 @@
 
     <!-- Main CSS-->
     <link href="css/main.css" rel="stylesheet" media="all">
-	<meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
 <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.2/css/all.css" integrity="sha384-oS3vJWv+0UjzBfQzYUhtDYW+Pj2yciDJxpsK1OYPAYjqT085Qq/1cq5FLXAZQ7Ay" crossorigin="anonymous">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-	<style type="text/css">
-	body {
+  <style type="text/css">
+  body {
   font-family: "Lato", sans-serif;
 }
 
@@ -144,6 +144,20 @@ background-color:purple;
   background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
 }
 
+.modal1 {
+  display: none; /* Hidden by default */
+  position: fixed; /* Stay in place */
+  z-index: 1; /* Sit on top */
+  padding-top: 100px; /* Location of the box */
+  left: 0;
+  top: 0;
+  width: 100%; /* Full width */
+  height: 100%; /* Full height */
+  overflow: auto; /* Enable scroll if needed */
+  background-color: rgb(0,0,0); /* Fallback color */
+  background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+}
+
 /* Modal Content */
 .modal-content {
   position: relative;
@@ -185,6 +199,21 @@ background-color:purple;
   cursor: pointer;
 }
 
+
+.close1 {
+  color: white;
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
+}
+
+.close1:hover,
+.close1:focus {
+  color: #000;
+  text-decoration: none;
+  cursor: pointer;
+}
+
 .modal-header {
   padding: 2px 16px;
   background-color: #5cb85c;
@@ -219,8 +248,9 @@ a{
 
   <div class="container" style="padding-top:50px;">
 <div class="jumbotron">
-<h1>My Classes <button class="btn" id = "myBtn" style="margin-left: 700px; margin-bottom: 10px;"><i class="fa fa-plus"></i></button></h1>              
+<h1>My Groups <button class="btn" id = "myBtn" style="margin-left: 700px; margin-bottom: 10px;"><i class="fa fa-plus"></i></button></h1>              
 </div>
+<button class="btn" id = "myBtn1" style="margin-left: 900px;">Join Group</button>
 </div>
 
 <section id="RectangleFrames" class="color1 Round1">
@@ -228,7 +258,7 @@ a{
 <div class="card-group">
   
     <?php
-        $q = "SELECT * from studentClasses where sid = $sid ";
+        $q = "SELECT * from studentgroups where sid = $sid ";
         $sp = mysqli_prepare($conn,$q);
         mysqli_stmt_execute($sp);
         $result = mysqli_stmt_get_result($sp);
@@ -236,21 +266,20 @@ a{
         
         while($rows = $result->fetch_assoc()){
             $count++;
-            $cid = $rows['cid'];
-            $q1 = "SELECT * from classes where cid = $cid ";
+            $gid = $rows['gid'];
+            $q1 = "SELECT * from groups where gid = $gid ";
             $sp1 = mysqli_prepare($conn,$q1);
             mysqli_stmt_execute($sp1);
             $result1 = mysqli_stmt_get_result($sp1);
             while($rows1 = $result1->fetch_assoc()){
-              $id = $rows1['cid'];
               echo '<div class="col-auto mb-3">';
-              echo '<a href="viewClassStudent.php?id='.$id.'">';
+              echo '<a href="index1.php?gid='.$gid.'">';
               echo '<div style="width: 18rem" class="card color2">';
               echo '<img style="width:100%;height: 200px;" src="'.$l.'" class="card-img-top" alt="EyeGlasses">
                 <div class="card-body ">
-                <h5 class="card-title">Subject : '.$rows1['cname'].'</h5>
-                <p class="card-text"><h5>Code is : '.$rows1['ccode'].'</h5></p>
-                <p class="card-text text1"><h5><label class="pc">Faculty :'.$rows1['fid'].'</label></h5></p> 
+                <h5 class="card-title">Subject : '.$rows1['gname'].'</h5>
+                <p class="card-text"><h5>Code is : '.$rows1['gcode'].'</h5></p>
+                <p class="card-text text1"><h5><label class="pc">Subject :'.$rows1['cname'].'</label></h5></p> 
                 </div>';
               echo '</div>';
               echo '</a>';
@@ -273,7 +302,7 @@ a{
   <!-- Modal content -->
   <div class="modal-content">
     <div class="modal-header">
-      <h1>Join Class</h1>  
+      <h1>Add Group</h1>  
       <span class="close">&times;</span>
       
     </div>
@@ -286,15 +315,56 @@ a{
                 
                 <div class="card-body" style="background-color: black">
                     
-                    <form method="POST" action="joinClass.php">
+                    <form method="POST" action="addGroupToDatabase.php">
                         <div class="input-group">
-                            <input class="input--style-3" type="text" placeholder="Enter Class Code" name="code" required="required">
+                            <input class="input--style-3" type="text" placeholder="Enter GroupName" name="name" required="required">
                         </div>
                         
                         
                         <div class="input-group">
-                            <input class="input--style-3" type="password" placeholder="Enter Password" name="password" required="required">
+                            <input class="input--style-3" type="text" placeholder="Enter Subject" name="subject" required="required">
                         </div>
+                        
+                        <div class="p-t-10">
+                            <button class="btn btn--pill btn--green" style = "color:blue" type="submit" name="submit">Submit</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    </div>
+    <div class="modal-footer">
+      <h1></h1>
+    </div>
+  </div>
+</div>
+
+<div id="myModal1" class="modal1">
+
+  <!-- Modal content -->
+  <div class="modal-content">
+    <div class="modal-header">
+      <h1>Join Group</h1>  
+      <span class="close1">&times;</span>
+      
+    </div>
+    <div class="modal-body">
+      <br>
+      <br>
+      <div class="page-wrapper bg-gra-01 p-t-180 p-b-100 font-poppins">
+        <div class="wrapper wrapper--w780">
+            <div class="card card-3">
+                
+                <div class="card-body" style="background-color: black">
+                    
+                    <form method="POST" action="joinGroup.php">
+                        <div class="input-group">
+                            <input class="input--style-3" type="text" placeholder="Enter GroupCode" name="code" required="required">
+                        </div>
+                        
+                        
+                        
                         
                         <div class="p-t-10">
                             <button class="btn btn--pill btn--green" style = "color:blue" type="submit" name="submit">Submit</button>
@@ -346,6 +416,33 @@ window.onclick = function(event) {
     modal.style.display = "none";
   }
 }
+
+var modal1 = document.getElementById("myModal1");
+
+// Get the button that opens the modal
+var btn1 = document.getElementById("myBtn1");
+
+// Get the <span> element that closes the modal
+var span1 = document.getElementsByClassName("close1")[0];
+
+// When the user clicks the button, open the modal 
+btn1.onclick = function() {
+  modal1.style.display = "block";
+}
+
+// When the user clicks on <span> (x), close the modal
+span1.onclick = function() {
+  modal1.style.display = "none";
+}
+
+// When the user clicks anywhere outside of the modal, close it
+window.onclick = function(event) {
+  if (event.target == modal1) {
+    modal1.style.display = "none";
+  }
+}
+
+
 </script>
 <script src="vendor/jquery/jquery.min.js"></script>
     <!-- Vendor JS-->

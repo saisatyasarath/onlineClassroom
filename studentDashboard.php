@@ -19,6 +19,33 @@
 <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
 <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.2/css/all.css" integrity="sha384-oS3vJWv+0UjzBfQzYUhtDYW+Pj2yciDJxpsK1OYPAYjqT085Qq/1cq5FLXAZQ7Ay" crossorigin="anonymous">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="Colorlib Templates">
+    <meta name="author" content="Colorlib">
+    <meta name="keywords" content="Colorlib Templates">
+
+    <!-- Title Page-->
+    <title>Virtual Classroom</title>
+
+    <!-- Icons font CSS-->
+    <link href="vendor/mdi-font/css/material-design-iconic-font.min.css" rel="stylesheet" media="all">
+    <link href="vendor/font-awesome-4.7/css/font-awesome.min.css" rel="stylesheet" media="all">
+    <!-- Font special for pages-->
+    <link href="https://fonts.googleapis.com/css?family=Poppins:100,100i,200,200i,300,300i,400,400i,500,500i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">
+
+    <!-- Vendor CSS-->
+    <link href="vendor/select2/select2.min.css" rel="stylesheet" media="all">
+    <link href="vendor/datepicker/daterangepicker.css" rel="stylesheet" media="all">
+
+    <!-- Main CSS-->
+    <link href="css/main.css" rel="stylesheet" media="all">
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.2/css/all.css" integrity="sha384-oS3vJWv+0UjzBfQzYUhtDYW+Pj2yciDJxpsK1OYPAYjqT085Qq/1cq5FLXAZQ7Ay" crossorigin="anonymous">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
 <style type="text/css">
 body {
   font-family: "Lato", sans-serif;
@@ -118,6 +145,7 @@ background-color:purple;
   <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
   <a href="studentDashboard.php">Home</a>
   <a href="studentClasses.php">My Classes</a>
+  <a href="myGroups.php">MyGroups</a>
   <a href="logout.php">Logout</a>
 </div>
 
@@ -126,8 +154,40 @@ background-color:purple;
 
   <div class="container" style="padding-top: 50px;">
 <div class="jumbotron">
-<h1>Welcome to Gudimetla Classroom all announcements will appear here</h1>              
+<h2>Welcome to Gudimetla Classroom all announcements will appear here</h2>
+<br>              
 </div>
+
+    <div class="panel-group">
+        <?php 
+
+        $q = "SELECT * from announcements where cid in (select cid from studentclasses where sid = $uid)";
+        $sp = mysqli_prepare($conn,$q);
+        mysqli_stmt_execute($sp);
+        $result = mysqli_stmt_get_result($sp);
+        $count = 0;
+        while($rows = $result->fetch_assoc()){
+          $uid = $rows['uid'];
+          $name = "";
+          $q1 = "SELECT * from users where id = $uid";
+          $sp1 = mysqli_prepare($conn,$q1);
+          mysqli_stmt_execute($sp1);
+          $result1 = mysqli_stmt_get_result($sp1);
+          while($rows1 = $result1->fetch_assoc()){
+            $name = $rows1['email'];
+          }
+
+
+          echo '<div class="panel panel-default">';
+          echo '<div class="panel-heading">'.$rows["title"].'<label class="pull-right" style="margin-bottom:20px;">  by '.$name.'</label></div>';
+          
+          echo '<div class="panel-body">'.$rows["des"].'</div>';
+          echo '</div>';
+        }
+      ?>
+      </div>
+
+
 </div>
 </div>
 </body>

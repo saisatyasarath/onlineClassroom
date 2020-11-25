@@ -2,22 +2,14 @@
 
   include 'databaseConnect.php';
   if(isset($_POST['submit'])){
-  	session_start();
-  	$fid = $_SESSION["fid"];
-  	$cid = $_POST["id"];
   	$name = $_POST["name1"];
   	$date = ''.$_POST["date"];
     $des = $_POST["description"];
-  	echo gettype($date);
-  	//echo $cid;
+    $cid = $_POST["id"];
+    $aid = $_POST["aid"];
+    $target_dir = "uploads/";
     $date1 = "".date("Y_m_d");
-    $time = "".date("H_i_sa",time());
-  	
-
-  	
-  		//echo "I am here";
-  		//echo $_POST['fileToUpload'];
-  		$target_dir = "uploads/";
+		$time = "".date("H_i_sa",time());
 		$target_file = $target_dir .''.$cid.''.$date1.''.$time.''. basename($_FILES['fileToUpload']["name"]);
     
 		$uploadOk = 1;
@@ -54,25 +46,22 @@
     	}
 	}
 
-	   $stmt = $conn->prepare("INSERT INTO assignments (fid,cid,path,name,description,date) VALUES (?,?,?,?,?,?)");
-		$stmt->bind_param('iissss',$fid,$cid,$img,$name,$des,$date);
-		$stmt->execute();
-		?>
-  <script type="text/javascript">
+	$stmt = $conn->prepare("UPDATE assignments set path = ?, name = ?,description=?,date=? where id=?");
+	$stmt->bind_param('ssssi',$img,$name,$des,$date,$aid);
+	//$stmt->bind_param('iissss',$fid,$cid,$img,$name,$des,$date);
+	$stmt->execute(); ?>
+	<script type="text/javascript">
                 
                 var v = <?php echo $cid ?>;
                 var ur = "".concat("http://localhost/virtualClassroom/viewClass.php?id=");
                 var vr = ur.concat(v);
-                if(window.confirm('Items Added Successfully')){
+                if(window.confirm('Assignment Updated Successfully')){
                     window.location.href = vr;    
                 }
                 
             </script>
-  <?php
-  	
-  	
-
-  }else{
+  <?php }else{
   	header("Location:login.php");
   }
+
 ?>

@@ -53,22 +53,41 @@
     mysqli_stmt_execute($aft);
     $res=mysqli_stmt_get_result($aft);
     if(mysqli_num_rows($res)){
-    	$st = "UPDATE assignmentfiles SET date=$dt,path=$img where cid=$cid and sid=$sid and aid=$aid";
-    	$aft1 = mysqli_prepare($conn,$st);
-    	mysqli_stmt_execute($aft1);
+    	
+
+        $stmt = $conn->prepare("UPDATE assignmentfiles SET date=?,path=? where cid=$cid and sid=$sid and aid=$aid");
+        $stmt->bind_param('ss',$dt,$img);
+    //$stmt->bind_param('iissss',$fid,$cid,$img,$name,$des,$date);
+    $stmt->execute();
     	//$res=mysqli_stmt_get_result($aft);
-    	echo "<script>if (window.confirm('Assignment submitted successfully')) 
-            {
-                window.location.href='http://localhost/virtualClassroom/facultyDashboard.php';
-            };</script>";
+    	?>
+    <script type="text/javascript">
+                
+                var v = <?php echo $cid ?>;
+                var ur = "".concat("http://localhost/virtualClassroom/viewClassStudent.php?id=");
+                var vr = ur.concat(v);
+                if(window.confirm('Assignment Updated Successfully')){
+                    window.location.href = vr;    
+                }
+                
+            </script>
+  <?php
     }else{
 	$stmt = $conn->prepare("INSERT INTO assignmentfiles (cid,sid,path,date,aid) VALUES (?,?,?,?,?)");
 		$stmt->bind_param('iissi',$cid,$sid,$img,$dt,$aid);
 		$stmt->execute();
-		echo "<script>if (window.confirm('Assignment submitted successfully')) 
-            {
-                window.location.href='http://localhost/virtualClassroom/facultyDashboard.php';
-            };</script>";
+		?>
+    <script type="text/javascript">
+                
+                var v = <?php echo $cid ?>;
+                var ur = "".concat("http://localhost/virtualClassroom/viewClassStudent.php?id=");
+                var vr = ur.concat(v);
+                if(window.confirm('Assignment Uploaded Successfully')){
+                    window.location.href = vr;    
+                }
+                
+            </script>
+  <?php
 	}
     }else{
   		header("Location:login.php");

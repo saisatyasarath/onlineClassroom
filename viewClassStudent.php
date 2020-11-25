@@ -6,13 +6,32 @@
    }else{
    		header("Location:login.php");
    }
+   $sid = $_SESSION["uid"];
    $id = 0;
    if(isset($_GET['id'])){
    	  $id = $_GET['id'];
    }
+
+
    if($id==0){
    	  header("Location:login.php");
    }
+
+   $sen = "SELECT * from studentclasses where cid=$id and sid = $sid";
+   $sp2 = mysqli_prepare($conn,$sen);
+   mysqli_stmt_execute($sp2);
+    $ans = mysqli_stmt_get_result($sp2);
+    $sub = null;
+    $ffid = -1;
+    while($ab = $ans->fetch_assoc()){
+      
+      $ffid = $ab['sid'];
+    }
+
+    if($ffid==-1){
+      header("Location:login.php");
+    }
+
    //echo $id;
 ?>
 
@@ -128,6 +147,20 @@
   background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
 }
 
+.modal3 {
+  display: none; /* Hidden by default */
+  position: fixed; /* Stay in place */
+  z-index: 1; /* Sit on top */
+  padding-top: 100px; /* Location of the box */
+  left: 0;
+  top: 0;
+  width: 100%; /* Full width */
+  height: 100%; /* Full height */
+  overflow: auto; /* Enable scroll if needed */
+  background-color: rgb(0,0,0); /* Fallback color */
+  background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+}
+
 /* Modal Content */
 .modal-content {
   position: relative;
@@ -183,6 +216,20 @@
   cursor: pointer;
 }
 
+.close3 {
+  color: white;
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
+}
+
+.close3:hover,
+.close3:focus {
+  color: #000;
+  text-decoration: none;
+  cursor: pointer;
+}
+
 .modal-header {
   padding: 2px 16px;
   background-color: #5cb85c;
@@ -200,12 +247,48 @@ a{
   color: white;
 }
 
+.tab {
+  overflow: hidden;
+  border: 1px solid #ccc;
+  background-color: #f1f1f1;
+}
+
+/* Style the buttons that are used to open the tab content */
+.tab button {
+  background-color: inherit;
+  float: left;
+  border: none;
+  outline: none;
+  cursor: pointer;
+  padding: 14px 16px;
+  transition: 0.3s;
+}
+
+/* Change background color of buttons on hover */
+.tab button:hover {
+  background-color: #ddd;
+}
+
+/* Create an active/current tablink class */
+.tab button.active {
+  background-color: #ccc;
+}
+
+/* Style the tab content */
+.tabcontent {
+  display: none;
+  padding: 6px 12px;
+  border: 1px solid #ccc;
+  border-top: none;
+}
+
 </style>
 <body>
 <div id="mySidenav" class="sidenav">
   <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
-  <a href="facultyDashboard.php"><i class="fa fa-home"></i> Home</a>
-  
+  <a href="studentDashboard.php"><i class="fa fa-home"></i> Home</a>
+  <a href="studentClasses.php">My Classes</a>
+  <a href="myGroups.php">MyGroups</a>
   <a href="logout.php">Logout</a>
 </div>
 <div id="main">
@@ -214,9 +297,7 @@ a{
 <div class="jumbotron">
        <label class = "board" style="margin-left: 260px; color: yellow;">Welcome to class</label>         
 </div>  
-          <button class="btn btn-primary" id = "myBtn" style="margin-left: 10px;" disabled>View Study Materials</button><button style="margin-left: 700px; " class="btn btn-primary" id = "myBtn1"><a href="viewAssignmentStudent.php?id=<?php echo $id;?>">View Assignment</a></button>
-          <br />
-          <br />
+          
 
        <!--  <div class="panel-group">
     		<div class="panel panel-default">
@@ -232,6 +313,16 @@ a{
       			<div class="panel-body">Panel Content</div>
     		</div>
   		</div> -->
+
+      <button class="btn btn-primary"  style="margin-left: 900px;margin-bottom: 10px;" id = "view"><a href="index.php?clid=<?php echo $id;?>">View Classmates</a></button>
+
+       <div class="tab">
+        <button class="tablinks" onclick="openCity(event, 'stm')">StudyMaterials</button>
+        <button class="tablinks" onclick="openCity(event, 'anc')">Announcements</button>
+        <button class="tablinks" onclick="openCity(event, 'ass')">Assignments</button>
+      </div>
+
+      <div id="stm" class="tabcontent">
       <div class="panel-group">
       <?php 
 
@@ -248,11 +339,164 @@ a{
         }
       ?>
       </div>
+    </div>
+
+    <div id="anc" class="tabcontent">
+          <button class="btn btn-primary"  style="margin-left: 900px;margin-bottom: 10px;" id = "myBtn3">Create Announcement</button>
+
+         
+
+          <div class="panel-group">
+        <?php 
+
+        $q = "SELECT * from announcements where cid = $id";
+        $sp = mysqli_prepare($conn,$q);
+        mysqli_stmt_execute($sp);
+        $result = mysqli_stmt_get_result($sp);
+        $count = 0;
+        while($rows = $result->fetch_assoc()){
+          $uid = $rows['uid'];
+          $name = "";
+          $q1 = "SELECT * from users where id = $uid";
+          $sp1 = mysqli_prepare($conn,$q1);
+          mysqli_stmt_execute($sp1);
+          $result1 = mysqli_stmt_get_result($sp1);
+          while($rows1 = $result1->fetch_assoc()){
+            $name = $rows1['email'];
+          }
+
+
+          echo '<div class="panel panel-default">';
+          echo '<div class="panel-heading">'.$rows["title"].'<label class="pull-right" style="margin-bottom:20px;">  by '.$name.'</label></div>';
+          
+          echo '<div class="panel-body">'.$rows["des"].'</div>';
+          echo '</div>';
+        }
+      ?>
+      </div>
+          
+      </div>
+
+      <div id="ass" class="tabcontent">
+          <div class="panel-group">
+      <?php 
+
+        $q = "SELECT * from assignments where cid = $id ";
+        $sp = mysqli_prepare($conn,$q);
+        mysqli_stmt_execute($sp);
+        $result = mysqli_stmt_get_result($sp);
+        $count = 0;
+        while($rows = $result->fetch_assoc()){
+          $aid = $rows['id'];
+          $query = "SELECT * from assignmentfiles where cid=$id and sid=$sid and aid=$aid";
+          $aft = mysqli_prepare($conn,$query);
+          mysqli_stmt_execute($aft);
+          $res=mysqli_stmt_get_result($aft);
+          
+          echo '<div class="panel panel-default">';
+          echo '<div class="panel-heading">'.$rows["name"].'  <label class="pull-right"> Due Date : '.$rows["date"].'</label></div>';
+          echo '<div class="panel-body">'.$rows["description"].'<button class="btn btn-primary pull-right"><a href="'.$rows["path"].'" style="color:white;">Download</a></button></div>';
+           if(mysqli_num_rows($res)){
+            echo '<div class="panel-body"><button class="btn btn-primary" id = "myBtn" onclick = "show('.$aid.')" value="'.$aid.'">Modify Submission</button><label class="pull-right" style="color:green;">Submitted</label></div>';  
+          }else{
+            echo '<div class="panel-body"><button class="btn btn-primary" id = "myBtn1" onclick = "show('.$aid.')" value="'.$aid.'">Upload</button><label class="pull-right" style="color:red;">Not Yet Submitted</label></div>';
+          }
+          
+          
+          echo '</div>';
+        }
+      ?>
+      </div>
+      </div>
 </div>
 
 
 
   </div>
+
+
+  <div id="myModal" class="modal">
+
+  <!-- Modal content -->
+  <div class="modal-content">
+    <div class="modal-header">
+      <h1>Attach File</h1>  
+      <span class="close">&times;</span>
+      
+    </div>
+<div class="modal-body">
+      <br>
+      <br>
+      <div class="page-wrapper bg-gra-01 p-t-180 p-b-100 font-poppins">
+        <div class="wrapper wrapper--w780">
+            <div class="card card-3">
+                
+                <div class="card-body" style="background-color: black">
+                    
+                    <form method="POST" action="uploadAssignment.php" enctype="multipart/form-data">
+                        <div class="input-group">
+                           <input type="file" name="fileToUpload" >
+                        </div>
+                        
+                          <input type="hidden" name="id" value = "<?php echo $id ?>">
+                          <input type="hidden" id="assid" name="aid" value="">
+                        <div class="p-t-10">
+                            <input class=" btn--pill btn--green" type="submit" name="submit">
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    </div>
+
+</div>
+
+  </div>
+
+
+  <div id="myModal3" class="modal3">
+<div class="modal-content">
+    <div class="modal-header">
+        
+      <span class="close3" style="margin-left: 1170px;">&times;</span>
+      
+    </div>
+    <div class="modal-body">
+      <br>
+      <br>
+      <div class="page-wrapper bg-gra-01 p-t-180 p-b-100 font-poppins">
+        <div class="wrapper wrapper--w780">
+            <div class="card card-3">
+                
+                <div class="card-body" style="background-color: black">
+                    <h2 class="title">Add Announcement</h2>
+                    <form method="POST" action="addAnncFac.php" enctype="multipart/form-data">
+                      <div class="input-group">
+                            <input class="input--style-3" type="text" placeholder="Title" name="title" required="required">
+                        </div>
+                        <div class="input-group">
+                            <input class="input--style-3" type="text" placeholder="Announcement Description" name="ades" required="required">
+                        </div>
+                        
+                        <input type="hidden" name="id" value="<?php echo $id ?>">
+                        <input type="hidden" name="uid" value="<?php echo $sid ?>">
+                        <div class="p-t-10">
+                            <input class="btn btn--pill btn--green" type="submit" name="submit">
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    </div>
+    <div class="modal-footer">
+      <h1></h1>
+    </div>
+  </div>
+</div>
+
+
 </body>
 
 <script>
@@ -264,6 +508,84 @@ function openNav() {
 function closeNav() {
   document.getElementById("mySidenav").style.width = "0";
   document.getElementById("main").style.marginLeft= "0";
+}
+
+
+var modal = document.getElementById("myModal");
+
+// Get the button that opens the modal
+var btn = document.getElementById("myBtn");
+var btn1 = document.getElementById("myBtn1");
+
+// Get the <span> element that closes the modal
+var span = document.getElementsByClassName("close")[0];
+
+// When the user clicks the button, open the modal 
+function show(par) {
+  modal.style.display = "block";
+  var id = par;
+  console.log(id);
+  var asid = document.getElementById("assid");
+  asid.value = id;
+}
+
+
+// When the user clicks on <span> (x), close the modal
+span.onclick = function() {
+  modal.style.display = "none";
+}
+
+// When the user clicks anywhere outside of the modal, close it
+window.onclick = function(event) {
+  if (event.target == modal) {
+    modal.style.display = "none";
+  }
+}
+
+
+var modal3 = document.getElementById("myModal3");
+
+// Get the button that opens the modal
+var btn3 = document.getElementById("myBtn3");
+
+// Get the <span> element that closes the modal
+var span3 = document.getElementsByClassName("close3")[0];
+btn3.onclick = function() {
+  modal3.style.display = "block";
+}
+
+// When the user clicks on <span> (x), close the modal
+span3.onclick = function() {
+  modal3.style.display = "none";
+}
+
+// When the user clicks anywhere outside of the modal, close it
+window.onclick = function(event) {
+  if (event.target == modal3) {
+    modal3.style.display = "none";
+  }
+}
+
+
+function openCity(evt, cityName) {
+  // Declare all variables
+  var i, tabcontent, tablinks;
+
+  // Get all elements with class="tabcontent" and hide them
+  tabcontent = document.getElementsByClassName("tabcontent");
+  for (i = 0; i < tabcontent.length; i++) {
+    tabcontent[i].style.display = "none";
+  }
+
+  // Get all elements with class="tablinks" and remove the class "active"
+  tablinks = document.getElementsByClassName("tablinks");
+  for (i = 0; i < tablinks.length; i++) {
+    tablinks[i].className = tablinks[i].className.replace(" active", "");
+  }
+
+  // Show the current tab, and add an "active" class to the button that opened the tab
+  document.getElementById(cityName).style.display = "block";
+  evt.currentTarget.className += " active";
 }
 
 

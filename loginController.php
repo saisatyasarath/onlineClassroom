@@ -35,6 +35,16 @@ if(isset($_POST['login']))
         }
         else{
             session_start();
+            $_SESSION['user_id'] = $id;
+            $_SESSION['username'] = $username;
+        $sub_query = "
+        INSERT INTO login_details 
+        (user_id) 
+        VALUES ('".$id."')
+        ";
+        $statement = $conn->prepare($sub_query);
+        $statement->execute();
+        $_SESSION['login_details_id'] = $conn->insert_id;
             if($role == "student"){
                 session_start();
                 $_SESSION["uid"] = $id;

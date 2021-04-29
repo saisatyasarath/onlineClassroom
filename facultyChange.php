@@ -89,7 +89,7 @@
     $mail->Password = "";
 
     //Set Params
-    $mail->SetFrom("gudimetlavr11@gmail.com");
+    $mail->SetFrom("");
     $mail->AddAddress($email);
     $mail->Subject = "Password Reset";
     $otp = mt_rand(10000000, 99999999);

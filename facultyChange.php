@@ -85,8 +85,8 @@
     $mail->IsHTML(true);
 
     //Authentication
-    $mail->Username = "gudimetlavr11@gmail.com";
-    $mail->Password = "Veer@1234";
+    $mail->Username = "";
+    $mail->Password = "";
 
     //Set Params
     $mail->SetFrom("gudimetlavr11@gmail.com");
